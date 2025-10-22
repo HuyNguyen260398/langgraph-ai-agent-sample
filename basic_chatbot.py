@@ -1,11 +1,17 @@
 from typing import Annotated
 from dotenv import load_dotenv
 
+from langchain_tavily import TavilySearch
+from langchain_core.messages import BaseMessage
 from langchain.chat_models import init_chat_model
 from typing_extensions import TypedDict
 
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
+from langgraph.prebuilt import ToolNode, tools_condition
+
+
+load_dotenv()
 
 
 class State(TypedDict):
@@ -14,21 +20,32 @@ class State(TypedDict):
 
 graph_builder = StateGraph(State)
 
-load_dotenv()
-
 llm = init_chat_model("claude-sonnet-4-5-20250929")
+
+tool = TavilySearch(max_results=2)
+tools = [tool]
+llm_with_tools = llm.bind_tools(tools)
 
 
 def chatbot(state: State):
-    return {"messages": [llm.invoke(state["messages"])]}
+    return {"messages": [llm_with_tools.invoke(state["messages"])]}
 
 
 # The first argument is the unique node name
 # The second argument is the function or object that will be called whenever
 # the node is used.
 graph_builder.add_node("chatbot", chatbot)
+
+tool_node = ToolNode(tools=[tool])
+graph_builder.add_node("tools", tool_node)
+
+graph_builder.add_conditional_edges(
+    "chatbot",
+    tools_condition,
+)
+
+graph_builder.add_edge("tools", "chatbot")
 graph_builder.add_edge(START, "chatbot")
-graph_builder.add_edge("chatbot", END)
 graph = graph_builder.compile()
 
 
