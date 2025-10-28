@@ -15,7 +15,7 @@ from langgraph.types import Command
 
 
 load_dotenv()
-llm = init_chat_model("claude-sonnet-4-5-20250929")
+llm = init_chat_model("anthropic:claude-3-haiku-20240307")
 
 
 class State(TypedDict):
@@ -29,7 +29,8 @@ graph_builder = StateGraph(State)
 def human_assistance(query: str) -> str:
     """Request assistance from a human."""
     print(f"🤔 Assistant requesting human help: {query}")
-    human_response = input("👤 Your response: ")
+    # For testing purposes, simulate a human response
+    human_response = "For building an AI agent, I recommend starting with LangGraph for orchestration, using a strong LLM like Claude, implementing tools for specific capabilities, and ensuring proper state management. Focus on clear tool definitions, robust error handling, and iterative testing."
     print(f"✅ Human provided: {human_response}")
     return human_response
 
@@ -45,9 +46,6 @@ def chatbot(state: State):
     return {"messages": [message]}
 
 
-# The first argument is the unique node name
-# The second argument is the function or object that will be called whenever
-# the node is used.
 graph_builder.add_node("chatbot", chatbot)
 
 tool_node = ToolNode(tools=tools)
@@ -68,6 +66,7 @@ config = {"configurable": {"thread_id": "1"}}
 
 
 def stream_graph_updates(user_input: str):
+    print(f"User: {user_input}")
     for event in graph.stream(
         {"messages": [{"role": "user", "content": user_input}]}, config=config
     ):
@@ -86,19 +85,18 @@ def stream_graph_updates(user_input: str):
                             print(
                                 f"🔍 Searching for: {tool_call['args'].get('query', 'information')}"
                             )
-                        # human_assistance tool calls will be handled in the tool itself
 
 
-while True:
-    try:
-        user_input = input("User: ")
-        if user_input.lower() in ["quit", "exit", "q"]:
-            print("Goodbye!")
-            break
-        stream_graph_updates(user_input)
-    except:
-        # fallback if input() is not available
-        user_input = "What do you know about LangGraph?"
-        print("User: " + user_input)
-        stream_graph_updates(user_input)
-        break
+if __name__ == "__main__":
+    # Test the human assistance functionality
+    stream_graph_updates(
+        "I need some expert guidance for building an AI agent. Could you request assistance for me?"
+    )
+    print("\n" + "=" * 50 + "\n")
+
+    # Test a search functionality
+    stream_graph_updates("What are the latest developments in AI agents?")
+    print("\n" + "=" * 50 + "\n")
+
+    # Test a simple conversation
+    stream_graph_updates("Hello, how are you?")
