@@ -5,9 +5,9 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "langchain-tavily>=0.2.12",
-    "langchain[anthropic]>=1.0.2",
-    "langgraph>=1.0.1",
-    "langsmith>=0.4.37",
-    "python-dotenv>=1.1.1",
+    "ipykernel>=7.1.0",
+    "langchain>=1.0.5",
+    "langgraph>=1.0.2",
+    "langsmith>=0.4.41",
+    "python-dotenv>=1.2.1",
 ]
