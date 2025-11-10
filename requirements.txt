@@ -1,4 +1,6 @@
 langgraph
 langchain
 langsmith
+langchain-anthropic
+langchain-tavily
 python-dotenv
