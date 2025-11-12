@@ -8,8 +8,10 @@ dependencies = [
     "ipykernel>=7.1.0",
     "langchain>=1.0.5",
     "langchain-anthropic>=1.0.2",
+    "langchain-mcp-adapters>=0.1.12",
     "langchain-tavily>=0.2.13",
     "langgraph>=1.0.2",
     "langsmith>=0.4.41",
+    "mcp>=1.21.0",
     "python-dotenv>=1.2.1",
 ]
