@@ -4,5 +4,6 @@ langsmith
 langchain-anthropic
 langchain-tavily
 langchain-mcp-adapters
+langchain-community
 python-dotenv
 mcp
